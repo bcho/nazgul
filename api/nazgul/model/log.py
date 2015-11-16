@@ -53,11 +53,17 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
     site = db.relationship('Site')
 
     url_id = db.Column(db.Integer, db.ForeignKey('url.id'))
-    url = db.relationship('Url')
+    url = db.relationship(
+        'Url', primaryjoin='Url.id==VisitorActionLog.url_id')
     url_ref_id = db.Column(db.Integer, db.ForeignKey('url.id'))
-    url_ref = db.relationship('Url')
+    url_ref = db.relationship(
+        'Url', primaryjoin='Url.id==VisitorActionLog.url_ref_id')
 
     action_id = db.Column(db.Integer, db.ForeignKey('visitor_action.id'))
-    action = db.relationship('VisitorAction')
+    action = db.relationship(
+        'VisitorAction',
+        primaryjoin='VisitorAction.id==VisitorActionLog.action_id')
     action_ref_id = db.Column(db.Integer, db.ForeignKey('visitor_action.id'))
-    action_ref = db.relationship('VisitorAction')
+    action_ref = db.relationship(
+        'VisitorAction',
+        primaryjoin='VisitorAction.id==VisitorActionLog.action_ref_id')

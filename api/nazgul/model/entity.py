@@ -41,3 +41,11 @@ class VisitorAction(BaseColumnsMixin, db.Model):
     """An action."""
 
     name = db.Column(db.Enum(*VisitorActions._as_db_enum()), unique=True)
+
+    @classmethod
+    def init_db(cls, db):
+        for action in VisitorActions:
+            action_record = cls()
+            action_record.name = str(action.value)
+            db.session.add(action_record)
+        db.session.commit()
