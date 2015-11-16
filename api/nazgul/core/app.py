@@ -10,9 +10,24 @@ from flask import Flask
 from nazgul.core import db
 
 
-_modules = [
+builtin_modules = [
     db,
 ]
+
+
+def setup_modules(app, *modules):
+    """Setup app with modules.
+
+    Args:
+        app: application instance.
+        *modules: modules to be setup.
+
+    Returns:
+        application instance.
+    """
+    for module in modules:
+        app = module.setup(app)
+    return app
 
 
 def build(configs=None, modules=None):
@@ -35,9 +50,7 @@ def build(configs=None, modules=None):
     app.config.from_envvar('NAZGUL_API_CONFIG', silent=True)
     app.config.update(configs)
 
-    for builtin_module in _modules:
-        app = builtin_module.setup(app)
-    for module in modules:
-        app = module.setup(app)
+    setup_modules(app, *builtin_modules)
+    setup_modules(app, *modules)
 
     return app
