@@ -8,6 +8,7 @@
 import click
 
 from nazgul.core.app import build
+from nazgul.core.app import setup_modules
 
 
 app = build()
@@ -23,7 +24,14 @@ def main():
 @click.option('--port', default=5566)
 def serve_api(host, port):
     """Serve api."""
-    app.run(host=host, port=port, debug=True)
+    from nazgul import report
+
+    api_app = setup_modules(
+        app,
+        report
+    )
+
+    api_app.run(host=host, port=port, debug=True)
 
 
 @main.command()
