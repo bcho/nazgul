@@ -7,6 +7,7 @@
 
 from flask import request
 
+from nazgul.contrib.flask import cors
 from nazgul.contrib.flask import returns_json
 
 from ._base import bp
@@ -34,7 +35,8 @@ def extract_report(request):
     }
 
 
-@bp.route('', methods=['POST'])
+@bp.route('', methods=['POST', 'OPTIONS'])
+@cors(headers=['content-type'])
 @returns_json
 def upload_report():
     extract_report(request)
