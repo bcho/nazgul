@@ -1,0 +1,17 @@
+{
+  "name": "nazgul",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "",
+  "content_scripts": [
+    {
+      "matches": ["http://127.0.0.1:8000/*"],
+      "js": ["res/javascript/nazgul.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "options_page": "options.html",
+  "permissions": [
+    "storage"
+  ]
+}
