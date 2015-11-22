@@ -6,14 +6,19 @@
         REPORT_API_ENDPOINT = '/api/v1/report',
         VISITOR_KEY = '__nazgul_visitor';
 
+    var ACTION_CLICK = 'click',
+        ACTION_QUERY = 'query';
+
     // Shadowed variables.
     var console = window.console,
         crypto = window.crypto,
         Date = window.Date,
         document = window.document,
+        encodeURIComponent = window.encodeURIComponent,
         localStorage = window.localStorage,
         JSON = window.JSON,
-        XMLHttpRequest = window.XMLHttpRequest;
+        XMLHttpRequest = window.XMLHttpRequest,
+        pageHref = document.location.href;
 
     // XXX support modern browser only.
     function generateUUID() {
@@ -76,83 +81,112 @@
 
     // Simple api client.
     var apiClient = {
-        req: function(method, url, data, onsetup, onsuccess, onerror) {
-            if (!onsetup) { onsetup = function(r) {}; }
-            if (!onsuccess) { onsuccess = function(r) {}; }
-            if (!onerror) { onerror = function(r) {}; }
-
-            var request = new XMLHttpRequest();
-            request.open(method, url, true);
-            onsetup(request);
-            request.onload = function() {
-                if (request.status >= 200 && request.status < 400) {
-                    onsuccess(request);
-                } else {
-                    onerror(request);
-                }
-            };
-            request.onerror = function() { onerror(request); };
-
-            if (data) {
-                request.send(data);
-            } else {
-                request.send();
-            }
-        },
-
-        post: function(url, onsetup, onsuccess, onerror) {
-            this.req('POST', url, onsetup, onsuccess, onerror);
+        getBeacon: function(url, data, onsuccess) {
+            var encodedData = encodeURIComponent(JSON.stringify(data)),
+                image = new Image(1, 1);
+            image.src = url + (url.indexOf('?') == -1 ? '?' : '&') + 'data=' + encodedData;
+            image.onload = onsuccess;
         }
     };
+
+    function log(payload) {
+        var url = `${apiHost}${REPORT_API_ENDPOINT}`;
+        apiClient.getBeacon(url, payload, function() {
+            console.log('log sent');
+        });
+    }
+
+    // Log query action.
+    function logQuery(form) {
+        log({
+            visitor_id: visitor.visitorId,
+            action: 'query',
+            url: pageHref,
+            referer: document.referrer,
+            created_at: nowString(),
+
+            value: form
+        });
+    }
+
+    // Log click action.
+    function logClick(destUrl) {
+        log({
+            visitor_id: visitor.visitorId,
+            action: 'click',
+            url: pageHref,
+            referer: document.referrer,
+            created_at: nowString(),
+
+            value: {
+                from_url: pageHref,
+                dest_url: destUrl
+            }
+        });
+    }
+
+    function injectClick() {
+        var links = document.querySelectorAll('a');
+        for (var i = 0; i < links.length; i++) {
+            links[i].onclick = function(e) {
+                var target = e.target;
+                if (!target || !target.href) {
+                    return;
+                }
+                logClick(target.href);
+            }
+        }
+    }
+
+    function injectQuery() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+            forms[i].onsubmit = function(e) {
+                e.preventDefault();
+
+                var target = e.target;
+                if (!target) {
+                    return;
+                }
+
+                var formValue = {};
+
+                var inputs = target.querySelectorAll('input');
+                for (var j = 0; j < inputs.length; j++) {
+                    if (inputs[j].type != 'text' && inputs[j].type != 'search') {
+                        continue;
+                    }
+                    if (!inputs[j].name) {
+                        continue;
+                    }
+                    formValue[inputs[j].name] = inputs[j].value;
+                }
+
+                logQuery({
+                    form_action: target.action,
+                    form_id: target.id,
+                    form_value: formValue
+                });
+
+                window.setTimeout(function() {
+                    target.submit();
+                }, 150);
+            }
+        }
+    }
 
     // Exposed API.
     window.nazgul = {
-        setup(settings) {
-            if (settings.apiHost) {
-                apiHost = settings.apiHost;
-            }
+        log: log,
+        logClick: logClick,
+        logQuery: logQuery,
 
-            return this;
-        },
-
-        log: function(payload) {
-            var url = `${apiHost}${REPORT_API_ENDPOINT}`;
-            apiClient.post(
-                url,
-                JSON.stringify(payload),
-                function(req) {
-                    req.setRequestHeader('Content-Type', 'application/json');
-                },
-                function(req) {
-                    console.log('log sent');
-                },
-                function(req) {
-                    console.error('log send failed');
-                }
-            );
-        },
-
-        // Log click action.
-        logClick: function(url) {
-            this.log({
-                visitor_id: visitor.visitorId,
-                action: 'click',
-                url: url,
-                created_at: nowString(),
-            });
-        },
-
-        // Log query action.
-        logQuery: function(url, keyword) {
-            this.log({
-                visitor_id: visitor.visitorId,
-                action: 'query',
-                url: url,
-                value: {
-                    keyword: keyword
-                },
-                created_at: nowString()
-            });
+        // Inject actions.
+        inject: function() {
+            injectClick();
+            injectQuery();
         }
     };
+
+    window.nazgul.inject();
 })(window);

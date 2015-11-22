@@ -5,9 +5,11 @@
     Client metric upload api.
 """
 
+import json
+
+from flask import abort
 from flask import request
 
-from nazgul.contrib.flask import cors
 from nazgul.contrib.flask import returns_json
 
 from ._base import bp
@@ -22,22 +24,26 @@ def extract_report(request):
     Returns:
         dict.
     """
-    payload = request.get_json(force=True)
-    return {
-        'visitor_id': payload['visitor_id'],
-        'action': payload['action'],
-        'created_at': payload['created_at'],
+    try:
+        payload = json.loads(request.values['data'])
+        return {
+            'visitor_id': payload['visitor_id'],
+            'action': payload['action'],
+            'created_at': payload['created_at'],
 
-        'url': payload['url'],
-        'user_agent': request.user_agent,
-        'referer': request.referrer,
-        'ip': request.remote_addr,
-    }
+            'url': payload['url'],
+            'user_agent': payload.get('user_agent', request.user_agent),
+            'referer': payload.get('referer', request.referrer),
+            'ip': request.remote_addr,
+
+            'value': payload.get('value', {})
+        }
+    except ValueError:
+        abort(400)
 
 
-@bp.route('', methods=['POST', 'OPTIONS'])
-@cors(headers=['content-type'])
+@bp.route('', methods=['GET'])
 @returns_json
 def upload_report():
-    extract_report(request)
+    print(extract_report(request))
     return {'code': 0}
