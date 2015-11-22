@@ -5,7 +5,7 @@
   "description": "",
   "content_scripts": [
     {
-      "matches": ["http://127.0.0.1:8000/*"],
+      "matches": ["http://127.0.0.1:8000/*", "https://*.taobao.com/*"],
       "js": ["res/javascript/nazgul.js"],
       "run_at": "document_end"
     }

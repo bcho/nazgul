@@ -25,12 +25,10 @@ def main():
 def serve_api(host, port):
     """Serve api."""
     from nazgul import report
-    from nazgul import track
 
     api_app = setup_modules(
         app,
-        report,
-        track
+        report
     )
 
     api_app.run(host=host, port=port, debug=True)
