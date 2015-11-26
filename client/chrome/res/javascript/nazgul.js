@@ -130,16 +130,17 @@
     }
 
     function injectClick() {
-        var links = document.querySelectorAll('a');
-        for (var i = 0; i < links.length; i++) {
-            links[i].onclick = function(e) {
-                var target = e.target;
-                if (!target || !target.href) {
-                    return;
-                }
-                logClick(target.href);
+        document.querySelector('html').onclick = function(e) {
+            if (!e.target || e.target.nodeName != 'A') {
+                return;
             }
-        }
+
+            var target = e.target;
+            if (!target || !target.href) {
+                return;
+            }
+            logClick(target.href);
+        };
     }
 
     function injectQuery() {
