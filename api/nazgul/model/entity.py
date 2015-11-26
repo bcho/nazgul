@@ -22,7 +22,7 @@ class Site(BaseColumnsMixin, db.Model):
 class Url(BaseColumnsMixin, db.Model):
     """A url."""
 
-    # Url should be `scheme://netloc/path`.
+    # Url should be `scheme://hostname/path`.
     url = db.Column(db.String, unique=True)
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     site = db.relationship('Site', backref=db.backref('urls'))
@@ -49,3 +49,9 @@ class VisitorAction(BaseColumnsMixin, db.Model):
             action_record.name = str(action.value)
             db.session.add(action_record)
         db.session.commit()
+
+    @classmethod
+    def from_enum(cls, e):
+        rv = cls.query.filter_by(name=e.value).first()
+        assert rv is not None
+        return rv

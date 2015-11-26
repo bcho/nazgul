@@ -6,6 +6,7 @@
 """
 
 import enum
+import json
 
 from nazgul.core.datetime import now
 from nazgul.core.db import db
@@ -34,13 +35,18 @@ class VisitorLog(BaseColumnsMixin, db.Model):
     visit_count = db.Column(db.Integer, default=0)
     first_visit_time = db.Column(ArrowType, default=now)
     last_visit_time = db.Column(ArrowType, default=now)
-    first_action_time = db.Column(ArrowType)
-    last_action_time = db.Column(ArrowType)
+    first_action_time = db.Column(ArrowType, default=now)
+    last_action_time = db.Column(ArrowType, default=now)
     referer_type = db.Column(db.Enum(*RefererType._as_db_enum()))
     referer_url = db.Column(db.String)
     os = db.Column(db.String)
     browser = db.Column(db.String)
     ip = db.Column(db.String)
+
+    @property
+    def latest_action(self):
+        if self.actions:
+            return self.actions[-1]
 
 
 class VisitorActionLog(BaseColumnsMixin, db.Model):
@@ -67,3 +73,15 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
     action_ref = db.relationship(
         'VisitorAction',
         primaryjoin='VisitorAction.id==VisitorActionLog.action_ref_id')
+
+    action_value_raw = db.Column('action_value', db.Text)
+
+    @property
+    def action_value(self):
+        try:
+            return json.loads(self.action_value_raw)
+        except:
+            pass
+
+    def set_action_value(self, value):
+        self.action_value_raw = json.dumps(value)
