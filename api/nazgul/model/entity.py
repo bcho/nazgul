@@ -16,13 +16,13 @@ from ._base import EnumTypeMixin
 class Site(BaseColumnsMixin, db.Model):
     """A site."""
 
-    host = db.Column(db.String, unique=True)
+    netloc = db.Column(db.String, unique=True)
 
 
 class Url(BaseColumnsMixin, db.Model):
     """A url."""
 
-    # Url should be `scheme://hostname/path`.
+    # Url should be `scheme://netloc/path`.
     url = db.Column(db.String, unique=True)
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     site = db.relationship('Site', backref=db.backref('urls'))

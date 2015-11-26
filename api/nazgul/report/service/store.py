@@ -18,11 +18,11 @@ from nazgul.model import VisitorActions
 from nazgul.model import VisitorLog
 
 
-def store_site(host):
-    site = Site.query.filter_by(host=host).first()
+def store_site(netloc):
+    site = Site.query.filter_by(netloc=netloc).first()
     if not site:
         site = Site()
-        site.host = host
+        site.netloc = netloc
         db.session.add(site)
         db.session.commit()
     return site
@@ -32,20 +32,20 @@ def store_url(url):
     """Store a url.
 
     Args:
-        url: source url, will be cleaned into `scheme://hostnamepath`
+        url: source url, will be cleaned into `scheme://netlocpath`
 
     Returns:
         ~`nazgul.model.Url`
     """
     parsed_url = urlparse(url)
-    cleaned_url = '{scheme}://{hostname}{path}'.format(
+    cleaned_url = '{scheme}://{netloc}{path}'.format(
         scheme=parsed_url.scheme,
-        hostname=parsed_url.hostname,
+        netloc=parsed_url.netloc,
         path=parsed_url.path)
 
     url = Url.query.filter_by(url=cleaned_url).first()
     if not url:
-        site = store_site(parsed_url.hostname)
+        site = store_site(parsed_url.netloc)
         url = Url()
         url.url = cleaned_url
         url.site = site
