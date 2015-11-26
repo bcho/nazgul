@@ -18,6 +18,7 @@
         localStorage = window.localStorage,
         JSON = window.JSON,
         XMLHttpRequest = window.XMLHttpRequest,
+        netloc = document.location.host,
         pageHref = document.location.href;
 
     // XXX support modern browser only.
@@ -36,6 +37,10 @@
         return (new Date()).toISOString();
     }
 
+    var visitorPersistenceKey = (function() {
+        return `${VISITOR_KEY}:${netloc}`;
+    })();
+
     function Visitor(visitorId) {
         this.visitorId = visitorId || generateUUID();
 
@@ -46,12 +51,12 @@
         var dump = JSON.stringify({
             'visitor_id': this.visitorId
         });
-        localStorage[VISITOR_KEY] = dump;
+        localStorage[visitorPersistenceKey] = dump;
     };
 
     // Current session visitor.
     var visitor = (function() {
-        var storedVisitor = localStorage[VISITOR_KEY];
+        var storedVisitor = localStorage[visitorPersistenceKey];
         if (storedVisitor === undefined) {
             return new Visitor();
         }
