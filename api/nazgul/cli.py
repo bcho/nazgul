@@ -24,11 +24,13 @@ def main():
 @click.option('--port', default=5566)
 def serve_api(host, port):
     """Serve api."""
+    from nazgul import dashboard
     from nazgul import report
 
     api_app = setup_modules(
         app,
-        report
+        report,
+        dashboard
     )
 
     api_app.run(host=host, port=port, debug=True)
