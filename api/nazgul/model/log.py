@@ -56,7 +56,7 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
     visitor = db.relationship('VisitorLog', backref=db.backref('actions'))
 
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
-    site = db.relationship('Site')
+    site = db.relationship('Site', backref=db.backref('visitor_actions'))
 
     url_id = db.Column(db.Integer, db.ForeignKey('url.id'))
     url = db.relationship(

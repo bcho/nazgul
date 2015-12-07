@@ -11,6 +11,9 @@ from flask import url_for
 
 from ._base import bp
 
+from nazgul.model import Site
+from nazgul.model import VisitorLog
+
 
 @bp.route('', methods=['GET'])
 def redirect_to_stats():
@@ -19,4 +22,7 @@ def redirect_to_stats():
 
 @bp.route('/stats', methods=['GET'])
 def stats():
-    return render_template('stats.html')
+    return render_template(
+        'stats.html',
+        sites=Site.query.all(),
+        visitors=VisitorLog.query.all())

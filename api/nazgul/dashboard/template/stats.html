@@ -43,7 +43,56 @@
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">最近 7 天数据</h1>
-          <h2 class="sub-header">原始数据</h2>
+          <h2 class="sub-header">Sites</h2>
+          <div class="table-responsive" id="metric-sites">
+            <table class="table table-striped">
+              <thead>
+                <td>#</td>
+                <td>netloc</td>
+                <td>#clients</td>
+                <td>#clients actions</td>
+              </thead>
+              <tbody>
+                {% for site in sites %}
+                <tr>
+                  <td>{{ site.id }}</td>
+                  <td>{{ site.netloc }}</td>
+                  <td>{{ site.visitor_logs | length }}</td>
+                  <td>{{ site.visitor_actions | length }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <h2 class="sub-header">Visitors</h2>
+          <div class="table-responsive" id="metric-visitors">
+            <table class="table table-striped">
+              <thead>
+                <td>#</td>
+                <td>uuid</td>
+                <td>site</td>
+                <td>visit times</td>
+                <td>first visit</td>
+                <td>last visit</td>
+                <td>os</td>
+                <td>browser</td>
+              </thead>
+              <tbody>
+                {% for visitor in visitors %}
+                <tr>
+                  <td>{{ visitor.id }}</td>
+                  <td>{{ visitor.uuid }}</td>
+                  <td>{{ visitor.site.netloc }}</td>
+                  <td>{{ visitor.visit_count }}</td>
+                  <td>{{ visitor.first_visit_time.humanize() }}</td>
+                  <td>{{ visitor.last_visit_time.humanize() }}</td>
+                  <td>{{ visitor.os }}</td>
+                  <td>{{ visitor.browser }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
