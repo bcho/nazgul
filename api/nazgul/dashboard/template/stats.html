@@ -35,22 +35,21 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Reports</a></li>
-            <li><a href="#">Analytics</a></li>
-            <li><a href="#">Export</a></li>
+            <li class="active"><a href="#">总览 <span class="sr-only">(current)</span></a></li>
+            <li><a href="#">站点报表</a></li>
+            <li><a href="#">站点分析</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
           <h1 class="page-header">最近 7 天数据</h1>
-          <h2 class="sub-header">Sites</h2>
+          <h2 class="sub-header">站点</h2>
           <div class="table-responsive" id="metric-sites">
             <table class="table table-striped">
               <thead>
                 <td>#</td>
-                <td>netloc</td>
-                <td>#clients</td>
-                <td>#clients actions</td>
+                <td>站点地址</td>
+                <td>客户端总数</td>
+                <td>客户端操作总数</td>
               </thead>
               <tbody>
                 {% for site in sites %}
@@ -64,18 +63,18 @@
               </tbody>
             </table>
           </div>
-          <h2 class="sub-header">Visitors</h2>
+          <h2 class="sub-header">客户端</h2>
           <div class="table-responsive" id="metric-visitors">
             <table class="table table-striped">
               <thead>
                 <td>#</td>
-                <td>uuid</td>
-                <td>site</td>
-                <td>visit times</td>
-                <td>first visit</td>
-                <td>last visit</td>
-                <td>os</td>
-                <td>browser</td>
+                <td>客户端 id</td>
+                <td>客户端站点</td>
+                <td>访问次数</td>
+                <td>第一次访问时间</td>
+                <td>最后一次访问时间</td>
+                <td>操作系统</td>
+                <td>浏览器版本</td>
               </thead>
               <tbody>
                 {% for visitor in visitors %}
