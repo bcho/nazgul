@@ -26,3 +26,10 @@ def stats():
         'stats.html',
         sites=Site.query.all(),
         visitors=VisitorLog.query.all())
+
+
+@bp.route('/user/<string:uuid>', methods=['GET'])
+def user(uuid):
+    return render_template(
+        'user.html',
+        visitor=VisitorLog.query.filter_by(uuid=uuid).first_or_404())

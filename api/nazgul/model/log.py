@@ -14,6 +14,7 @@ from nazgul.core.db import db
 from ._base import ArrowType
 from ._base import BaseColumnsMixin
 from ._base import EnumTypeMixin
+from .entity import VisitorActions
 
 
 class RefererType(EnumTypeMixin, enum.Enum):
@@ -85,3 +86,11 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
 
     def set_action_value(self, value):
         self.action_value_raw = json.dumps(value)
+
+    def describe(self):
+        if self.action.enum_name == VisitorActions.CLICK:
+            dest_url = self.action_value['dest_url']
+            return '点击 <a href="{}">{}</a>...'.format(
+                dest_url, dest_url[:40])
+        if self.action.enum_name == VisitorActions.QUERY:
+            return 'query'

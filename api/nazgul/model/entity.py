@@ -42,6 +42,10 @@ class VisitorAction(BaseColumnsMixin, db.Model):
 
     name = db.Column(db.Enum(*VisitorActions._as_db_enum()), unique=True)
 
+    @property
+    def enum_name(self):
+        return VisitorActions(self.name)
+
     @classmethod
     def init_db(cls, db):
         for action in VisitorActions:

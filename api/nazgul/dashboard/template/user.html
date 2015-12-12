@@ -35,61 +35,28 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">总览 <span class="sr-only">(current)</span></a></li>
+            <li><a href="{{ url_for('.stats') }}">总览 <span class="sr-only">(current)</span></a></li>
             <li><a href="#">站点报表</a></li>
             <li><a href="#">站点分析</a></li>
-            <li><a href="#">用户记录</a></li>
+            <li class="active"><a href="#">用户记录</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">最近 7 天数据</h1>
-          <h2 class="sub-header">站点</h2>
-          <div class="table-responsive" id="metric-sites">
+          <h1 class="page-header">访客 {{ visitor.uuid }}</h1>
+          <h2 class="sub-header">操作记录</h2>
+          <div id="visitor" class="table-responsive">
             <table class="table table-striped">
               <thead>
-                <td>#</td>
-                <td>站点地址</td>
-                <td>客户端总数</td>
-                <td>客户端操作总数</td>
+                <td>时间</td>
+                <td>操作</td>
+                <td>站点</td>
               </thead>
               <tbody>
-                {% for site in sites %}
+                {% for action in visitor.actions %}
                 <tr>
-                  <td>{{ site.id }}</td>
-                  <td>{{ site.netloc }}</td>
-                  <td>{{ site.visitor_logs | length }}</td>
-                  <td>{{ site.visitor_actions | length }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-          <h2 class="sub-header">客户端</h2>
-          <div class="table-responsive" id="metric-visitors">
-            <table class="table table-striped">
-              <thead>
-                <td>#</td>
-                <td>客户端 id</td>
-                <td>客户端站点</td>
-                <td>访问次数</td>
-                <td>第一次访问时间</td>
-                <td>最后一次访问时间</td>
-                <td>操作系统</td>
-                <td>浏览器版本</td>
-              </thead>
-              <tbody>
-                {% for visitor in visitors %}
-                <tr>
-                  <td>{{ visitor.id }}</td>
-                  <td>
-                    <a href="{{ url_for('.user', uuid=visitor.uuid) }}">{{ visitor.uuid }}</a>
-                  </td>
-                  <td>{{ visitor.site.netloc }}</td>
-                  <td>{{ visitor.visit_count }}</td>
-                  <td>{{ visitor.first_visit_time.humanize() }}</td>
-                  <td>{{ visitor.last_visit_time.humanize() }}</td>
-                  <td>{{ visitor.os }}</td>
-                  <td>{{ visitor.browser }}</td>
+                  <td>{{ action.created_at.humanize() }}</td>
+                  <td>{{ action.describe() | safe }}</td>
+                  <td>{{ action.url.site.netloc }}</td>
                 </tr>
                 {% endfor %}
               </tbody>
