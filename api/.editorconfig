@@ -2,3 +2,6 @@ root = true
 
 [*.html]
 indent_size = 2
+
+[*.{js,json}]
+indent_size = 2

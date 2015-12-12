@@ -5,13 +5,18 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <title>用户数据</title>
+    <title>站点 {{ site.netloc }}</title>
 
     <!-- Bootstrap core CSS -->
     <link rel="stylesheet" href="{{ url_for('dashboard.static', filename='bootstrap/css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="http://csnw.github.io/d3.compose/d3.compose.css">
 
     <!-- Custom styles for this template -->
     <link href="{{ url_for('dashboard.static', filename='css/dashboard.css') }}" rel="stylesheet">
+
+    <script>
+      var SITE_NETLOC = "{{ site.netloc }}";
+    </script>
   </head>
 
   <body>
@@ -36,39 +41,27 @@
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
             <li><a href="{{ url_for('.stats') }}">总览 <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">站点报表</a></li>
+            <li class="active"><a href="#">站点报表</a></li>
             <li><a href="#">站点分析</a></li>
-            <li class="active"><a href="#">用户记录</a></li>
+            <li><a href="#">用户记录</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">访客 {{ visitor.uuid }}</h1>
-          <h2 class="sub-header">操作记录</h2>
-          <div id="visitor" class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <td>时间</td>
-                <td>操作</td>
-                <td>站点</td>
-              </thead>
-              <tbody>
-                {% for action in visitor.actions %}
-                <tr>
-                  <td>{{ action.created_at.humanize() }}</td>
-                  <td>{{ action.describe() | safe }}</td>
-                  <td>{{ action.url.site.netloc }}</td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
+          <h1 class="page-header">站点 {{ site.netloc }}</h1>
+          <h2 class="sub-header">站点流量走势</h2>
+          <div id="traffic"></div>
         </div>
       </div>
     </div>
 
-    <!-- Bootstrap core JavaScript
-    ================================================== -->
     <script src="{{ url_for('dashboard.static', filename='js/vendor/jquery.min.js') }}"></script>
     <script src="{{ url_for('dashboard.static', filename='bootstrap/js/bootstrap.min.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/vendor/underscore.min.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/vendor/d3.v3.min.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/vendor/d3.chart.min.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/vendor/d3.compose-all.min.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/utils.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/chart.js') }}"></script>
+    <script src="{{ url_for('dashboard.static', filename='js/site.js') }}"></script>
   </body>
 </html>

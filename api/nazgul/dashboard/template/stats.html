@@ -56,7 +56,9 @@
                 {% for site in sites %}
                 <tr>
                   <td>{{ site.id }}</td>
-                  <td>{{ site.netloc }}</td>
+                  <td>
+                    <a href="{{ url_for('.site', netloc=site.netloc) }}">{{ site.netloc }}</a>
+                  </td>
                   <td>{{ site.visitor_logs | length }}</td>
                   <td>{{ site.visitor_actions | length }}</td>
                 </tr>

@@ -94,3 +94,14 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
                 dest_url, dest_url[:40])
         if self.action.enum_name == VisitorActions.QUERY:
             return 'query'
+
+    def to_dict(self):
+        return {
+            'site': self.site.netloc,
+            'url': self.url.url,
+            'action': self.action.name,
+            'action_ref': self.action_ref.name,
+            'action_value': self.action_value,
+            'visitor_uuid': self.visitor.uuid,
+            'created_at': self.created_at.isoformat(),
+        }
