@@ -52,7 +52,7 @@
                 <td>站点</td>
               </thead>
               <tbody>
-                {% for action in visitor.actions %}
+                {% for action in visitor.actions | reverse %}
                 <tr>
                   <td>{{ action.created_at.humanize() }}</td>
                   <td>{{ action.describe() | safe }}</td>

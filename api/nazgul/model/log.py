@@ -93,7 +93,9 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
             return '点击 <a href="{}">{}</a>...'.format(
                 dest_url, dest_url[:40])
         if self.action.enum_name == VisitorActions.QUERY:
-            return 'query'
+            form_id = self.action_value.get('form_id')
+            keyword = self.action_value.get('form_value')
+            return '在表单 {} 中查询关键字 {}'.format(form_id, keyword)
 
     def to_dict(self):
         return {
