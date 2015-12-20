@@ -6,7 +6,7 @@
 
   function drawChart(data, el) {
     vg.parse.spec(data, (chart) => {
-      chart({'el': el}).update();
+      chart({'el': el, 'renderer': 'svg'}).update();
     });
   }
 
