@@ -1,25 +1,96 @@
-'use strict';
+(function(window) {
+  'use strict';
 
-let lineChart = (opts) => {
-  let scales = {
-    x: {data: opts.data, key: 'x', type: 'ordinal', adjancent: true},
-    y: {data: opts.data, key: 'y'}
+  let $ = window.$;
+  let vg = window.vg;
+
+  function drawChart(data, el) {
+    vg.parse.spec(data, (chart) => {
+      chart({'el': el}).update();
+    });
+  }
+
+  window.trafficChart = (data) => {
+    let $el = $('#traffic'),
+      el = $el[0];
+
+    let chartData = {
+      'width': $el.width() - 20,
+      'padding': {'top': 20, 'left': 30, 'bottom': 20, 'right': 10},
+      'data': [
+        {
+          'name': 'traffic',
+          'values': data
+        }
+      ],
+      'signals': [
+        {
+          'name': 'tooltip',
+          'init': {},
+          'streams': [
+            {'type': 'rect:mouseover', 'expr': 'datum'},
+            {'type': 'rect:mouseout', 'expr': '{}'},
+          ]
+        }
+      ],
+      'predicates': [
+        {
+          'name': 'tooltip', 'type': '==',
+          'operands': [{'signal': 'tooltip._id'}, {'arg': 'id'}]
+        }
+      ],
+      'scales': [
+        {'name': 'xscale', 'type': 'ordinal', 'range': 'width',
+         'domain': {'data': 'traffic', 'field': 'date'}},
+        {'name': 'yscale', 'range': 'height', 'nice': true,
+         'domain': {'data': 'traffic', 'field': 'amount'}}
+      ],
+      'axes': [
+        {'type': 'x', 'scale': 'xscale'},
+        {'type': 'y', 'scale': 'yscale'},
+      ],
+      'marks': [
+        {
+          'type': 'rect',
+          'from': {'data': 'traffic'},
+          'properties': {
+            'enter': {
+              'x': {'scale': 'xscale', 'field': 'date'},
+              'width': {'scale': 'xscale', 'band': true, 'offset': -1},
+              'y': {'scale': 'yscale', 'field': 'amount'},
+              'y2': {'scale': 'yscale', 'value': 0}
+            },
+            'update': {'fill': {'value': 'steelblue'}},
+            'hover': {'fill': {'value': 'red'}}
+          }
+        },
+        {
+          'type': 'text',
+          'properties': {
+            'enter': {
+              'align': {'value': 'center'},
+              'fill': {'value': '#333'}
+            },
+            'update': {
+              'x': {'scale': 'xscale', 'signal': 'tooltip.date'},
+              'dx': {'scale': 'xscale', 'band': true, 'mult': 0.5},
+              'y': {'scale': 'yscale', 'signal': 'tooltip.amount', 'offset': -5},
+              'text': {'signal': 'tooltip.amount'},
+              'fillOpacity': {
+                'rule': [
+                  {
+                    'predicate': {'name': 'tooltip', 'id': {'value': null}},
+                    'value': 0
+                  },
+                  {'value': 1}
+                ]
+              }
+            }
+          }
+        }
+      ]
+    };
+
+    drawChart(chartData, el);
   };
-
-  let charts = [
-    d3c.lines('l', {
-      data: opts.data,
-      xScale: scales.x,
-      yScale: scales.y,
-    }),
-  ];
-
-  let xAxis = d3c.axis('xAxis', {scale: scales.x, ticks: 2, tickFormat: opts.tickFormat});
-  
-  let yAxis = d3c.axis('yAxis', {scale: scales.y, ticks: 5});
-
-  return [
-    [yAxis, d3c.layered(charts)],
-    xAxis,
-  ];
-};
+})(window);

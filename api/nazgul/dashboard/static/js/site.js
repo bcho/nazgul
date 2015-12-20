@@ -16,22 +16,13 @@
       return datetimeToDate(x['created_at']);
     });
     let actionsCount = [];
-    let dates = [];
     for (let date in actionsByDate) {
       actionsCount.push({
-        x: dates.length,
-        y: actionsByDate[date].length
+        date: date,
+        amount: actionsByDate[date].length
       });
-      dates.push(date);
     }
 
-    let chartData = {
-      data: [{key: SITE_NETLOC, name: SITE_NETLOC, values: actionsCount}],
-      tickFormat: (i) => { return dates[i];},
-      include: {xy: false, title: true},
-      title: {text: 'title'},
-    };
-
-    d3.select('#traffic').chart('Compose', lineChart).draw(chartData);
+    trafficChart(actionsCount);
   }
 })();
