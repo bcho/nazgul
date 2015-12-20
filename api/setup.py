@@ -10,6 +10,7 @@ setup(
         'flask-sqlalchemy==2.1',
         'arrow==0.7.0',
         'click==5.1',
+        'vincent==0.4.4',
     ],
     include_package_data=True,
 

@@ -8,10 +8,12 @@
 from collections import defaultdict
 from urllib.parse import urlparse
 
+import arrow
 from flask import jsonify
 from flask import redirect
 from flask import render_template
 from flask import url_for
+import vincent
 
 from ._base import bp
 
@@ -58,7 +60,7 @@ def calculate_site_refers(site):
         if visitor_action.action.enum_name is not VisitorActions.CLICK:
             continue
         from_url = urlparse(visitor_action.action_value.get('from_url'))
-        s = from_url.netloc
+        s = from_url.netloc or visitor_action.action_value.get('from_url')
         sites_to_this_site[s].append(visitor_action.to_dict())
 
     for url in site.urls:
@@ -69,19 +71,48 @@ def calculate_site_refers(site):
             if visitor_action.action.enum_name is not VisitorActions.CLICK:
                 continue
             dest_url = urlparse(visitor_action.action_value.get('dest_url'))
-            s = dest_url.netloc
+            s = dest_url.netloc or visitor_action.action_value.get('dest_url')
             sites_from_this_site[s].append(visitor_action.to_dict())
+
+    to_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
+                            for k, v in sites_to_this_site.items()})
+    to_chart.legend('站点')
+    to_chart = to_chart.grammar()
+    from_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
+                              for k, v in sites_from_this_site.items()})
+    from_chart.legend('站点')
+    from_chart = from_chart.grammar()
 
     return {
         'to': sites_to_this_site,
+        'to_chart': to_chart,
         'from': sites_from_this_site,
+        'from_chart': from_chart,
     }
+
+
+def calculate_site_traffic(site):
+    dates = sorted(list({i.created_at for i in site.visitor_actions}))
+    if not dates:
+        return
+
+    actions_by_date = {}
+    for date in arrow.Arrow.span_range('day', dates[0], dates[-1]):
+        actions_by_date[date[0].format('MM-DD')] = 0
+    for action in site.visitor_actions:
+        date = action.created_at.format('MM-DD')
+        actions_by_date[date] += 1
+
+    chart = vincent.Bar(actions_by_date)
+    chart.legend = '流量'
+    chart.axis_titles(x='日期', y='请求数')
+    return chart.grammar()
 
 
 @bp.route('/site/<string:netloc>/data', methods=['GET'])
 def site_data(netloc):
     site = Site.query.filter_by(netloc=netloc).first_or_404()
     return jsonify({
-        'visitor_actions': [a.to_dict() for a in site.visitor_actions],
+        'traffic_chart': calculate_site_traffic(site),
         'refers': calculate_site_refers(site),
     })
