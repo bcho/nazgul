@@ -38,7 +38,14 @@
     }
 
     var visitorPersistenceKey = (function() {
-        return `${VISITOR_KEY}:${netloc}`;
+        var parts = netloc.split('.');
+        // www.baidu.com -> baidu.com
+        // www.a.baidu.com -> baidu.com
+        // baidu.com -> baidu.com
+        while (parts.length > 2) {
+            parts = parts.splice(1);
+        }
+        return `${VISITOR_KEY}:${parts.join('.')}`;
     })();
 
     function Visitor(visitorId) {
