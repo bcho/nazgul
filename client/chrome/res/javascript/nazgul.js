@@ -19,7 +19,8 @@
         JSON = window.JSON,
         XMLHttpRequest = window.XMLHttpRequest,
         netloc = document.location.host,
-        pageHref = document.location.href;
+        pageHref = document.location.href,
+        Cookies = window.Cookies;
 
     // XXX support modern browser only.
     function generateUUID() {
@@ -37,15 +38,20 @@
         return (new Date()).toISOString();
     }
 
-    var visitorPersistenceKey = (function() {
+    // www.baidu.com -> baidu.com
+    // www.a.baidu.com -> baidu.com
+    // baidu.com -> baidu.com
+    var rootDomain = (function() {
         var parts = netloc.split('.');
-        // www.baidu.com -> baidu.com
-        // www.a.baidu.com -> baidu.com
-        // baidu.com -> baidu.com
         while (parts.length > 2) {
             parts = parts.splice(1);
         }
-        return `${VISITOR_KEY}:${parts.join('.')}`;
+
+        return parts.join('.');
+    })();
+
+    var visitorPersistenceKey = (function() {
+        return `${VISITOR_KEY}:${rootDomain}`;
     })();
 
     function Visitor(visitorId) {
@@ -58,12 +64,14 @@
         var dump = JSON.stringify({
             'visitor_id': this.visitorId
         });
+        Cookies.set(visitorPersistenceKey, dump, { domain: rootDomain, expires: 100 });
         localStorage[visitorPersistenceKey] = dump;
     };
 
     // Current session visitor.
     var visitor = (function() {
-        var storedVisitor = localStorage[visitorPersistenceKey];
+        var storedVisitor = Cookies.get(visitorPersistenceKey);
+        console.log(storedVisitor);
         if (storedVisitor === undefined) {
             return new Visitor();
         }

@@ -5,8 +5,8 @@
   "description": "",
   "content_scripts": [
     {
-      "matches": ["http://127.0.0.1:8000/*", "https://*.taobao.com/*", "http://*.jd.com/*"],
-      "js": ["res/javascript/nazgul.js"],
+      "matches": ["https://*.taobao.com/*", "http://*.jd.com/*"],
+      "js": ["res/javascript/cookie.js", "res/javascript/nazgul.js"],
       "run_at": "document_end"
     }
   ],
