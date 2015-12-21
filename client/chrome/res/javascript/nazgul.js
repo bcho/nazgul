@@ -2,7 +2,7 @@
 (function(window) {
     // Constants.
     var KEY_API_HOST = '__nazgul_api_host',
-        DEFAULT_API_HOST = 'http://localhost:5566',
+        DEFAULT_API_HOST = 'http://cn.nazgul.hbc.rocks:5566',
         REPORT_API_ENDPOINT = '/api/v1/report',
         VISITOR_KEY = '__nazgul_visitor';
 
@@ -208,5 +208,13 @@
         }
     };
 
-    window.nazgul.inject();
+    var injectCounter = 3;
+    var inject = function() {
+        window.nazgul.inject();
+        injectCounter -= 1;
+        if (injectCounter > 0) {
+            window.setTimeout(inject, 500);
+        }
+    };
+    inject();
 })(window);
