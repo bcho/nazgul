@@ -25,7 +25,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">数据汇总</a>
+          <a class="navbar-brand" href="{{ url_for('.stats') }}">数据汇总</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse"></div>
       </div>
@@ -37,7 +37,6 @@
           <ul class="nav nav-sidebar">
             <li><a href="{{ url_for('.stats') }}">总览 <span class="sr-only">(current)</span></a></li>
             <li><a href="#">站点报表</a></li>
-            <li><a href="#">站点分析</a></li>
             <li class="active"><a href="#">用户记录</a></li>
           </ul>
         </div>
