@@ -58,7 +58,7 @@
                   <td>
                     <a href="{{ url_for('.site', netloc=site.netloc) }}">{{ site.netloc }}</a>
                   </td>
-                  <td>{{ site.visitor_logs | length }}</td>
+                  <td>{{ site.total_clients }}</td>
                   <td>{{ site.visitor_actions | length }}</td>
                 </tr>
                 {% endfor %}
@@ -71,7 +71,7 @@
               <thead>
                 <td>#</td>
                 <td>客户端 id</td>
-                <td>客户端站点</td>
+                <td>客户端来源站点</td>
                 <td>访问次数</td>
                 <td>第一次访问时间</td>
                 <td>最后一次访问时间</td>

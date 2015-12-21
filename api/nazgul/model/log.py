@@ -61,7 +61,8 @@ class VisitorActionLog(BaseColumnsMixin, db.Model):
 
     url_id = db.Column(db.Integer, db.ForeignKey('url.id'))
     url = db.relationship(
-        'Url', primaryjoin='Url.id==VisitorActionLog.url_id')
+        'Url', primaryjoin='Url.id==VisitorActionLog.url_id',
+        backref=db.backref('visitor_actions'))
     url_ref_id = db.Column(db.Integer, db.ForeignKey('url.id'))
     url_ref = db.relationship(
         'Url', primaryjoin='Url.id==VisitorActionLog.url_ref_id')

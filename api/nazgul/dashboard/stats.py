@@ -74,14 +74,19 @@ def calculate_site_refers(site):
             s = dest_url.netloc or visitor_action.action_value.get('dest_url')
             sites_from_this_site[s].append(visitor_action.to_dict())
 
-    to_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
-                            for k, v in sites_to_this_site.items()})
-    to_chart.legend('站点')
-    to_chart = to_chart.grammar()
-    from_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
-                              for k, v in sites_from_this_site.items()})
-    from_chart.legend('站点')
-    from_chart = from_chart.grammar()
+    to_chart = None
+    if sites_to_this_site:
+        to_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
+                                for k, v in sites_to_this_site.items()})
+        to_chart.legend('站点')
+        to_chart = to_chart.grammar()
+
+    from_chart = None
+    if sites_from_this_site:
+        from_chart = vincent.Pie({'{}: {}'.format(k, len(v)): len(v)
+                                  for k, v in sites_from_this_site.items()})
+        from_chart.legend('站点')
+        from_chart = from_chart.grammar()
 
     return {
         'to': sites_to_this_site,

@@ -18,6 +18,13 @@ class Site(BaseColumnsMixin, db.Model):
 
     netloc = db.Column(db.String, unique=True)
 
+    @property
+    def total_clients(self):
+        client_count = 0
+        for url in self.urls:
+            client_count += len(url.visitor_actions)
+        return client_count
+
 
 class Url(BaseColumnsMixin, db.Model):
     """A url."""
