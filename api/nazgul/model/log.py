@@ -28,7 +28,7 @@ class VisitorLog(BaseColumnsMixin, db.Model):
     """A visitor log."""
 
     # Client generated uuid.
-    uuid = db.Column(db.String, unique=True)
+    uuid = db.Column(db.String(512), unique=True)
     site_id = db.Column(db.Integer, db.ForeignKey('site.id'))
     site = db.relationship('Site', backref=db.backref('visitor_logs'))
 
@@ -39,10 +39,10 @@ class VisitorLog(BaseColumnsMixin, db.Model):
     first_action_time = db.Column(ArrowType, default=now)
     last_action_time = db.Column(ArrowType, default=now)
     referer_type = db.Column(db.Enum(*RefererType._as_db_enum()))
-    referer_url = db.Column(db.String)
-    os = db.Column(db.String)
-    browser = db.Column(db.String)
-    ip = db.Column(db.String)
+    referer_url = db.Column(db.String(512))
+    os = db.Column(db.String(512))
+    browser = db.Column(db.String(512))
+    ip = db.Column(db.String(512))
 
     @property
     def latest_action(self):
