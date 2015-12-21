@@ -41,7 +41,7 @@
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">访客 {{ visitor.uuid }}</h1>
+          <h1 class="page-header">访客 {{ visitor.uuid }} (IP: {{ visitor.ip }})</h1>
           <h2 class="sub-header">操作记录</h2>
           <div id="visitor" class="table-responsive">
             <table class="table table-striped">
@@ -55,7 +55,7 @@
                 <tr>
                   <td>{{ action.created_at.humanize() }}</td>
                   <td>{{ action.describe() | safe }}</td>
-                  <td>{{ action.url.site.netloc }}</td>
+                  <td><a href="{{ url_for('.site', netloc=action.url.site.netloc) }}">{{ action.url.site.netloc }}</a></td>
                 </tr>
                 {% endfor %}
               </tbody>
