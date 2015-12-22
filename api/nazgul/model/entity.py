@@ -22,7 +22,7 @@ class Site(BaseColumnsMixin, db.Model):
     def total_clients(self):
         client_count = 0
         for url in self.urls:
-            client_count += len(url.visitor_actions)
+            client_count += len(url.visitor_logs)
         return client_count
 
 
