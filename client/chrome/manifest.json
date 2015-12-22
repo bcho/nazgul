@@ -5,7 +5,7 @@
   "description": "",
   "content_scripts": [
     {
-      "matches": ["https://*.taobao.com/*", "http://*.jd.com/*"],
+      "matches": ["https://*.taobao.com/*", "http://*.jd.com/*", "http://*.mi.com/*"],
       "js": ["res/javascript/cookie.js", "res/javascript/nazgul.js"],
       "run_at": "document_end"
     }
